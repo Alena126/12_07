@@ -1,5 +1,10 @@
 from django.db import models
 from django.contrib import admin
+from django.utils.html import format_html
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+
+User = get_user_model()
 
 
 class Advertisements(models.Model):
@@ -9,6 +14,8 @@ class Advertisements(models.Model):
     auction = models.BooleanField("Торг", help_text="Отметьте если будет уместен торг")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(User, verbose_name='Пользователь', on_delete=models.CASCADE)
+    image = models.ImageField("Изображение", upload_to="advertisements/")
 
     @admin.display(description="Дата создания")
     def created_date(self):
@@ -32,8 +39,7 @@ class Advertisements(models.Model):
             )
         return self.updated_at.strftime("%d.%m.%Y в %H:%M:%S")
 
-
-
+    
     def __str__(self):
         return '%s %s' % (self.title, self.price)
 
